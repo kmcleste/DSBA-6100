@@ -31,7 +31,7 @@ BlockCluster is a real-time movie recommendation engine that uses a content-base
     To access the web application, go to <http://localhost:8501> in your web browser
 
 ---  
-<br><br>
+<br>
 
 | Team Member   |       Email         |
 | -----------   | --------------------|
@@ -44,6 +44,5 @@ BlockCluster is a real-time movie recommendation engine that uses a content-base
 
 University of North Carolina at Charlotte
 
-<br>
 
 Professor: [Dr. Zhang](https://belkcollege.charlotte.edu/directory/dongsong-zhang)
