@@ -1,7 +1,7 @@
 # Project BlockCluster
 
 ## What is it
-BlockCluster is a real-time movie recommendation engine that uses a content-based filtering. Our goal is to enable users to find movies that are relevant to those they already know and love. Users can access a lightweight web application created using Streamlit to run their recommendation queries.
+BlockCluster is a real-time movie recommendation engine that uses content-based filtering. Our goal is to enable users to find movies that are relevant to those they already know and love. Users can access a lightweight web application created using Streamlit to run their recommendation queries.
 
 ## Some prerequisites
 1. Clone this github to your local computer by running either the following shell command or download/extract the [zip file](https://github.com/kmcleste/DSBA-6100/archive/refs/heads/main.zip) from github
