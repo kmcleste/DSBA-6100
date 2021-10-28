@@ -1,7 +1,9 @@
 # getting base image
 FROM ubuntu
 
-MAINTAINER kmcleste pal <kmcleste@uncc.edu>
+LABEL kmcleste pal <kmcleste@uncc.edu>
+
+WORKDIR /app
 
 # runs at creation of image
 RUN apt-get update -y
@@ -18,3 +20,4 @@ RUN python3 -m pip install -r requirements.txt
 CMD ["streamlit", "run", "recommender.py"]
 
 EXPOSE 8501
+
