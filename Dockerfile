@@ -1,4 +1,4 @@
-# getting base ubuntu image
+# getting base image
 FROM ubuntu
 
 MAINTAINER kmcleste pal <kmcleste@uncc.edu>
@@ -8,9 +8,13 @@ RUN apt-get update -y
 RUN apt-get install git -y
 RUN apt-get install python3-pip -y
 RUN apt-get install zip unzip
-RUN git clone https://github.com/kmcleste/DSBA-6100.git
 
-USER root
-RUN cd DSBA-6100 && python3 -m pip install -r requirements.txt && unzip data.zip && streamlit run recommender.py
+WORKDIR /app
+RUN git clone https://github.com/kmcleste/DSBA-6100
 
+WORKDIR /app/DSBA-6100
+RUN unzip data.zip
+RUN python3 -m pip install -r requirements.txt
+CMD ["streamlit", "run", "recommender.py"]
 
+EXPOSE 8501
