@@ -1,0 +1,50 @@
+version: "2.0"
+stories:
+- story: goodbye
+  steps:
+  - intent: goodbye
+  - action: utter_goodbye
+- story: irrelevant fallback
+  steps:
+  - intent: irrelevant_fallback
+  - action: utter_irrelevant_fallback
+- story: derogatory
+  steps:
+  - intent: derogatory
+  - action: utter_derogatory
+- story: greet
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - action: utter_bot_functions
+- story: ask for movie and recommend similar
+  steps:
+  - intent: select_movie
+  - action: utter_which_movie
+  - intent: recommend_similar
+  - action: utter_recommend_similar
+- story: return X number of top movies
+  steps:
+  - intent: top_movies
+  - action: utter_top_movies
+- story: return bot functions
+  steps:
+  - intent: bot_functions
+  - action: utter_bot_functions
+- story: Say thank you
+  steps:
+  - intent: gratitude
+  - action: utter_gratitude
+- story: recommend movies with actor
+  steps:
+  - intent: recommend_actor
+  - action: utter_recommend_actor
+- story: recommend movies of certain genre
+  steps:
+  - intent: recommend_genre
+  - action: utter_recommend_genre
+- story: recommend movies of certain language
+  steps:
+  - intent: select_language 
+  - action: utter_recommend_selected_language
+

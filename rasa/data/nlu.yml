@@ -1,0 +1,302 @@
+version: "2.0"
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - moin
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+    - Hi
+    - Hello
+    - Hello!
+    - Hey
+    - Good afternoon!
+    - HELLLLLOOOOO
+    - Hello!!
+    - Heoo
+    - Good afternoon
+    - Hellol
+- intent: goodbye
+  examples: |
+    - good afternoon
+    - cu
+    - good by
+    - cee you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+    - see ya later
+    - Goodbye
+    - cya
+    - see ya
+    - gudbye
+- intent: bot_challenge
+  examples: |
+    - are you a bot?
+    - are you a human?
+    - am I talking to a bot?
+    - am I talking to a human?
+    - Are you a bot?
+    - what are you
+    - how are you
+    - are you a boy or a girl
+    - How are you?
+    - What are you
+    - What are you?
+    - Are you a pc or console gamer?
+- intent: bot_functions
+  examples: |
+    - What can you do?
+    - What is your purpose?
+    - what can you do
+    - whats ur purpose
+    - how do i use this
+    - What do you do?
+    - what is your purpose
+    - What do you do
+    - What is your purpose
+    - what do you do
+    - [Ponyo](movie)
+    - What can you do
+    - whats your purpose
+    - What do you dop
+    - What's your purpose
+    - what do i do
+    - What am i supposed to do
+    - Options
+    - options
+    - Features
+    - Choices
+    - choices
+    - optoins
+    - bot [functions](movie)
+    - [functions](movie)
+    - features
+    - bot features
+    - help
+    - Can I search a genre?
+    - what's your purpose
+- intent: recommend_similar
+  examples: |
+    - My favorite movie is [The Godfather](movie)
+    - My favorite movie is [The Dark Knight](movie)
+    - My favorite movie is [Sprited Away](movie)
+    - I like watching [paranormal activity](movie).
+    - I like to watch peepoo
+    - My favorite movie is [the titanic](movie)
+    - I like to watch [The Dark Knight](movie)
+    - I like to watch [Spirited Away](movie)
+    - My favorite movie is [Harry potter: goblet of fire](movie).
+    - My favorite movie is [Sandlot](movie)
+    - My favorite movie is [Spirited Away](movie)
+    - My favorite is [the Godfather](movie)
+    - My favorite move is [The Dark Knight](movie)
+    - I like [The Godfather](movie)
+    - My favorite is [John Wick](movie)
+    - My favorite movie is [John Wick](movie)
+    - I like watching [Midsommar](movie)
+    - My favorite movie is [Pineapple Express](movie)
+    - My favorite movie is [Harry Potter](movie)
+    - I like watch [The Titanic](movie)
+    - My favorite movies is [Spaceballs](movie)
+    - My favorite movie [Spaceballs](movie)
+    - My favorite movie is [Dune](movie)
+    - My favorite is [Dune](movie)!
+    - I like watching [Dune](movie)
+    - My facorite mobie is [The Kingsman](movie)
+    - [Midsommar](movie)
+    - [The Dark KNight](movie)
+    - [harry potter](movie)
+    - [dune](movie)
+    - [titanic](movie)
+    - My favorite movie is [Journey to the Center of The Earth](movie)
+    - I like watching [Doom](movie)
+    - I like watching [Star Wars](movie)
+    - My favorite movie is [Spaceballs](movie)
+    - Pulp [Fiction](movie)
+    - [12 Angry Men](movie)
+    - [My Neighbor Totoro](movie)
+    - [Star Wars](movie)
+    - [The Titanic](movie)
+    - My favorite movie is [Journey to the Center of the Earth](movie)
+    - My favorite movie is [The Titanic](movie)
+    - I like [Star Wars](movie)
+    - My favorite movie is [James Bond: Die Another Die](movie)
+    - my favorite movie is[ the lion king](movie)
+    - My favorite movie is [iCarly](movie)
+    - My favorite movie is [The Sound of Music](movie)
+    - My favorite movies is[ Swiss Army Man](movie)
+    - [Shang-chi](movie)
+    - My favorite movie is[ Shang-Chi](movie)
+    - My favorite is [James Bond](movie)
+    - The best movie is [Clifford: The Big Red Dog](movie)
+    - I like watching [Ron's Gone Wrong](movie)
+    - I like watching[ House of Gucci](movie)
+    - My favorite movie is [King Richard](movie)
+    - My favorite movie is [Ghostbusters: Afterlife](movie)
+    - My favorite movie is [Eternals](movie)
+    - My favorite movie is[ Holes](movie)
+    - I like watching [The French Dispatch](movie)
+    - The best movie is [Red Notice](movie)
+    - My favorite movie is [Spencer](movie)
+    - My favorite movie is [Private Watch Party](movie)
+    - I like to watch[ Private Watch Party](movie)
+    - My favorite movie is [the godfather](movie)
+    - Show me movies related to [The Godfather](movie)
+    - My favorite movie is [Land Before Time](movie)
+    - My favorite movie is [The Shrek](movie)
+    - My favorite movie is [Shrek](movie)
+    - I like to watch [Shrek](movie)
+    - My favorite my is [The Life of Pie](movie)
+    - My favorite movie is [Life of Pi](number_movies)
+    - best [Action](genre) movies
+    - I really like [marvel](movie) movies, what should I watch
+    - I want a movie similar to [The Haunted House](movie)
+    - The best movie is [Ironman](movie)
+    - My favorite movie is [Ironman](movie)
+    - [Journey to The Center of The Earth](movie)
+    - [Ironman](movie)
+    - [Scary Movie: 4](movie)
+    - [Schindlers List](movie)
+    - [Sandlot](movie)
+    - My favorite movie is [Oddball](movie)
+    - [Venom](movie)
+    - venom
+    - My favorite movie is [Venom](movie)
+    - [Spiderman](movie)
+    - My favorite movie is [The titanic](movie)
+    - [Brother Bear](movie)
+    - [Toy Story](movie)
+    - Which one should I watch?
+    - [avatar](movie)
+    - show me [superman](movie)
+    - hey, i am interested in watching some [action](genre) movies, but I am unable to decide between[ batman returns](movie) or [iron man part 3](movie). Can you suggest which is better according to viewer reviews?
+    - i want to watch [batman](movie)
+    - can you tell show me[ iron man](movie) movies list
+    - i like [captain america](movie) movies
+    - my favorite movie is[ lord of the rings](movie)
+    - recommend movies like [troy](movie)
+    - [troy](movie)
+    - recommend movies like [Avatar](movie)
+    - [Ironan](movie), it is my favorite
+    - [Ironman](movie), it's my favorite
+- intent: irrelevant_fallback
+  examples: |
+    - Are you sad?
+    - Are you sad
+    - sad
+    - Are you happy
+    - Whats your favorite food
+    - im going to the dentist on tuesday
+    - do you like music
+    - im going to space tomorrow
+    - Who is the richest person on the planet
+    - How mxhc would can a wood chuck chuk if a wood chuk could chuck wood
+    - how many jelly beans fit in a bee hive
+    - how tall is mount everest
+    - Who is the president of bosnia
+    - What color is your dog
+    - how many spaghetti-o's fit in a fuel tank
+    - can i fill my fuel tank with spgahetti-o's?
+    - how many jelly beans fit ina pineapple
+    - Do you like chickens?
+    - What's your favorite song?
+    - [3](number_movies) little pigs sat on the wall...they fell [off](movie). Bacon.
+    - My favorite color is [red](movie)
+    - do you like dogs
+    - what color is the sky
+    - whats the weather like today
+    - do you like frogs
+- intent: derogatory
+  examples: |
+    - dickhead
+    - fucker
+    - piss
+    - shit
+    - this app sucks, fuck you bot
+    - fucking machine
+    - dumb bot
+    - stupid bot
+    - fuck you!
+    - fuck
+    - youre the reason i hate technology
+    - youre stupid
+    - this bot sucks ass
+    - fuck you
+    - dipshit
+    - Lol okay stupid fucking bot
+    - I hate technology
+    - Stupid bot
+    - no, stupid bot
+    - fucking bot
+    - Hey dickhead
+- intent: top_movies
+  examples: |
+    - show me the top [10](number_movies)
+    - Show me the top [10](number_movies) movies
+    - Show me the top [20](number_movies) movies
+    - Whats the top [10](number_movies) movies
+    - whats the top [15](number_movies) movies
+    - whats the top [72.2](number_movies) movies
+    - Show me top [30](number_movies) movies
+    - what are the highest rated movies
+    - What are the top [10](number_movies) movies
+    - what movies are the most watched
+    - shxw tbe tpo [38](number_movies) moovies
+    - what are the top [15](number_movies) movies
+    - show the top [100](number_movies) movies
+    - Top [20](number_movies) Movies
+    - Show me the top [50](number_movies) movies
+    - Show Top [20](number_movies) Movies
+    - Can you recommend a movie for me?
+    - What are your top [ten](number_movies) movies?
+    - What are your favorite movies?
+    - plz show me top [ten](number_movies) movies
+    - top [10](number_movies) [action](genre) movies
+- intent: gratitude
+  examples: |
+    - thank you
+    - Thanks !
+    - Thanks, I really appreciate it!
+    - Thanks!
+    - cool!
+    - Thanks for the help
+    - Thank you for the recommendations!
+- intent: select_genre
+  examples: |
+    - genre
+    - I like[ romantic comedies](genre)
+    - I want to see [Action](genre) movies
+    - I want to see Romantic Comedies
+- intent: select_actor
+  examples: |
+    - My favorite actor is [Brad Pitt](actor)
+    - I want movies with [Brad Pitt](actor)
+- intent: select_language
+  examples: |
+    - i want to see [telugu](language) movies
+- intent: nlu_fallback
+  examples: |
+    - recommend similar movies
+- intent: recommend_genre
+  examples: |
+    - I want to see [Documentaries](genre)
+    - I want to see [Thriller](genre) movies
+    - I want to see [Musicals](genre)
+    - I want to see [Scary](genre) movies
+    - I want to see [Dramas](genre)
+    - I want to see [Horror](genre) movies
+    - I want to see [Horror](genre) movies'

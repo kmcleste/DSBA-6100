@@ -1,0 +1,106 @@
+version: '2.0'
+config:
+  store_entities_as_slots: true
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
+intents:
+- greet:
+    use_entities: true
+- goodbye:
+    use_entities: true
+- bot_challenge:
+    use_entities: true
+- bot_functions:
+    use_entities: true
+- recommend_similar:
+    use_entities: true
+- irrelevant_fallback:
+    use_entities: true
+- derogatory:
+    use_entities: true
+- top_movies:
+    use_entities: true
+- select_movie:
+    use_entities: true
+- gratitude:
+    use_entities: true
+- nlu_fallback:
+    use_entities: true
+- select_language:
+    use_entities: true
+- recommend_genre:
+    use_entities: true
+- recommend_actor: 
+    use_entities: true 
+entities:
+- movie
+- number_movies
+- genre
+- actor
+- language
+slots:
+  movie:
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
+    influence_conversation: false
+  number_movies:
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: 10
+    auto_fill: true
+    influence_conversation: false
+  genre:
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null
+    auto_fill: true
+    influence_conversation: false
+  actor: 
+    type: rasa.shared.core.slots.AnySlot
+    initial_value: null 
+    auto_fill: true 
+    influence_conversation: false 
+  language: 
+    type: rasa.shared.core.slots.AnySlot 
+    initial_value: "english" 
+    auto_fill: true 
+    influence_conversation: false
+responses:
+  utter_greet:
+  - text: Hi! I'm your Blockcluster Assistant.
+  utter_goodbye:
+  - text: Goodbye!
+  utter_iamabot:
+  - text: I am a bot, powered by Rasa.
+  utter_bot_functions:
+  - buttons:
+    - payload: /top_movies
+      title: Top X Movies
+    - payload: /select_movie
+      title: Recommend Similar Movies
+    text: 'You can select from the options below or type your own:'
+  utter_recommend_similar:
+  - text: "Here's some titles that might be similar to {movie}:"
+  utter_irrelevant_fallback:
+  - text: I'm sorry - I'm not trained for that. Can you ask me a different question?
+  utter_derogatory:
+  - image: https://i0.wp.com/media0.giphy.com/media/oCPglisSuGsA8/giphy.gif
+    text: Uh-oh! I'm sorry if I've made you upset
+  utter_top_movies:
+  - text: "Here's a list of the top {number_movies} movies:"
+  - text: 'Top {number_movies} Movies:'
+  utter_fallback:
+  - text: Sorry, I'm still learning. Can you rephrase your question?
+  utter_which_movie:
+  - text: Which movie would you like to see recommendations for?
+  utter_gratitude:
+  - text: You're welcome!
+  utter_recommend_genre:
+  - text: "Here's some titles that might relate to {genre} movies:"
+  utter_recommend_actor:
+  - text: "Here's some movies that feature {actor}:"
+  utter_recommend_selected_language:
+  - text: "Here's some movies that are filmed in {language}:"
+actions: []
+forms: {}
+e2e_actions: []

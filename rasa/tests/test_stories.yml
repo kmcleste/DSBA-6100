@@ -1,0 +1,153 @@
+version: "2.0"
+stories:
+- story: happy path 1
+  steps:
+  - intent: greet
+    user: |-
+      hello there!
+  - action: utter_greet
+  - intent: mood_great
+    user: |-
+      amazing
+  - action: utter_happy
+- story: happy path 2
+  steps:
+  - intent: greet
+    user: |-
+      hello there!
+  - action: utter_greet
+  - intent: mood_great
+    user: |-
+      amazing
+  - action: utter_happy
+  - intent: goodbye
+    user: |-
+      bye-bye!
+  - action: utter_goodbye
+- story: sad path 1
+  steps:
+  - intent: greet
+    user: |-
+      hello
+  - action: utter_greet
+  - intent: mood_unhappy
+    user: |-
+      not good
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: affirm
+    user: |-
+      yes
+  - action: utter_happy
+- story: sad path 2
+  steps:
+  - intent: greet
+    user: |-
+      hello
+  - action: utter_greet
+  - intent: mood_unhappy
+    user: |-
+      not good
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: deny
+    user: |-
+      not really
+  - action: utter_goodbye
+- story: sad path 3
+  steps:
+  - intent: greet
+    user: |-
+      hi
+  - action: utter_greet
+  - intent: mood_unhappy
+    user: |-
+      very terrible
+  - action: utter_cheer_up
+  - action: utter_did_that_help
+  - intent: deny
+    user: |-
+      no
+  - action: utter_goodbye
+- story: say goodbye
+  steps:
+  - intent: goodbye
+    user: |-
+      bye-bye!
+  - action: utter_goodbye
+- story: bot challenge
+  steps:
+  - intent: bot_challenge
+    user: |-
+      are you a bot?
+  - action: utter_iamabot
+- story: Story from Conversation ID ce2ea2e6c0c146b19ab84d565b23f781
+  steps:
+  - intent: greet
+    user: |-
+      Hello
+  - action: utter_greet
+  - action: utter_bot_functions
+  - intent: top_movies
+    user: |-
+      /top_movies
+  - action: utter_top_movies
+  - intent: bot_functions
+    user: |-
+      [Options](movie)
+  - slot_was_set:
+    - movie: Options
+  - action: utter_bot_functions
+  - intent: select_movie
+    user: |-
+      /select_movie
+  - action: utter_which_movie
+  - intent: recommend_similar
+    user: |-
+      [Ironman](movie)
+  - slot_was_set:
+    - movie: Ironman
+  - action: utter_recommend_similar
+- story: Story from Conversation ID 5254afcf4a31403fba284e2a1d79abc3
+  steps:
+  - slot_was_set:
+    - movie: Venom
+  - slot_was_set:
+    - number_movies: '50'
+  - slot_was_set:
+    - movie: Venom
+  - intent: recommend_similar
+    user: |-
+      venom
+  - action: utter_recommend_similar
+  - intent: greet
+    user: |-
+      Hello
+  - action: utter_greet
+  - action: utter_bot_functions
+  - intent: select_movie
+    user: |-
+      /select_movie
+  - action: utter_which_movie
+  - intent: recommend_similar
+    user: |-
+      [Venom](movie)
+  - slot_was_set:
+    - movie: Venom
+  - action: utter_recommend_similar
+  - intent: bot_functions
+    user: |-
+      Options
+  - action: utter_bot_functions
+  - intent: select_movie
+    user: |-
+      /select_movie
+  - action: utter_which_movie
+  - slot_was_set:
+    - movie: Venom
+  - intent: recommend_similar
+    user: |-
+      [Spiderman](movie)
+  - slot_was_set:
+    - movie: Spiderman
+  - action: utter_recommend_similar
