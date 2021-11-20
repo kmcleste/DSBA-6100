@@ -39,16 +39,16 @@ def main():
         + "- Recommend Movie by User: Returns list of recommendations for user_A based on user_B watch/rating history"
     )
 
-    links = pd.read_csv("data/movielens/100k/links.csv", sep=",", encoding="latin-1")
-    movies = pd.read_csv("data/movielens/100k/movies.csv", sep=",", encoding="latin-1")
+    links = pd.read_csv("~/data/movielens/100k/links.csv", sep=",", encoding="latin-1")
+    movies = pd.read_csv("~/data/movielens/100k/movies.csv", sep=",", encoding="latin-1")
     ratings = pd.read_csv(
-        "data/movielens/100k/ratings.csv",
+        "~/data/movielens/100k/ratings.csv",
         sep=",",
         encoding="latin-1",
         usecols=["userId", "movieId", "rating"],
     )
     tags = pd.read_csv(
-        "data/movielens/100k/tags.csv",
+        "~/data/movielens/100k/tags.csv",
         sep=",",
         encoding="latin-1",
         usecols=["userId", "movieId", "tag"],
