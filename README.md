@@ -9,7 +9,7 @@ BlockCluster is a real-time movie recommendation engine that uses content-based 
 1. Clone this github to your local computer by running either the following shell command or download/extract the [zip file](https://github.com/kmcleste/DSBA-6100/archive/refs/heads/main.zip) from github
 
     ```shell
-    git clone https://github.com/kmcleste/DSBA-6100.git
+    git clone https://github.com/kmcleste/DSBA-6100/recommender.git
     ```
 
 2. Open the new github directory and install the required python packages
