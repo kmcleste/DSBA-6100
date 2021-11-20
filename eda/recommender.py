@@ -39,7 +39,7 @@ def main():
         + "- Score User Similarity: Returns similarity of 2 users using Euclidean distance\n"
         + "- Recommend Movie by User: Returns list of recommendations for user_A based on user_B watch/rating history"
     )
-    links = pd.read_csv("https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/links.csv", sep=',', encoding='utf-8')
+    links = pd.read_csv("https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/links.csv", sep=',', encoding='utf-8', error_bad_lines=False)
     movies = pd.read_csv("https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/movies.csv", sep=",", encoding="utf-8")
     ratings = pd.read_csv(
         "https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/ratings.csv",
