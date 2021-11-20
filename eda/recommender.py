@@ -40,15 +40,15 @@ def main():
     )
     print(os.getcwd())
     links = pd.read_csv("https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/links.csv", sep=",", encoding="latin-1")
-    movies = pd.read_csv("/data/movielens/100k/movies.csv", sep=",", encoding="latin-1")
+    movies = pd.read_csv("/https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/movies.csv", sep=",", encoding="latin-1")
     ratings = pd.read_csv(
-        "/data/movielens/100k/ratings.csv",
+        "https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/ratings.csv",
         sep=",",
         encoding="latin-1",
         usecols=["userId", "movieId", "rating"],
     )
     tags = pd.read_csv(
-        "/data/movielens/100k/tags.csv",
+        "https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/tags.csv",
         sep=",",
         encoding="latin-1",
         usecols=["userId", "movieId", "tag"],
