@@ -45,7 +45,6 @@ def main():
         "https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/ratings.csv",
         sep=",",
         encoding="utf-8",
-        usecols=["userId", "movieId", "rating"],
         error_bad_lines=False
     )
     # tags = pd.read_csv(
