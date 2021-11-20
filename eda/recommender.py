@@ -39,21 +39,20 @@ def main():
         + "- Score User Similarity: Returns similarity of 2 users using Euclidean distance\n"
         + "- Recommend Movie by User: Returns list of recommendations for user_A based on user_B watch/rating history"
     )
-    cwd = os.getcwd()
-    links = pd.read_csv(cwd+"/data/movielens/100k/links.csv", sep=",", encoding="latin-1")
-    movies = pd.read_csv(cwd+"/data/movielens/100k/movies.csv", sep=",", encoding="latin-1")
+    links = pd.read_csv("https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/links.csv", sep=',', encoding='utf-8')
+    movies = pd.read_csv("https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/movies.csv", sep=",", encoding="utf-8")
     ratings = pd.read_csv(
-        cwd+"/data/movielens/100k/ratings.csv",
+        "https://github.com/kmcleste/DSBA-6100/blob/main/eda/data/movielens/100k/ratings.csv",
         sep=",",
-        encoding="latin-1",
+        encoding="utf-8",
         usecols=["userId", "movieId", "rating"],
     )
-    tags = pd.read_csv(
-        cwd+"/data/movielens/100k/tags.csv",
-        sep=",",
-        encoding="latin-1",
-        usecols=["userId", "movieId", "tag"],
-    )
+    # tags = pd.read_csv(
+    #     cwd+"/data/movielens/100k/tags.csv",
+    #     sep=",",
+    #     encoding="latin-1",
+    #     usecols=["userId", "movieId", "tag"],
+    # )
 
     # remove rows with null values
     links = links.dropna()
