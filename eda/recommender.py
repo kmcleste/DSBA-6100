@@ -38,7 +38,7 @@ def main():
         + "- Score User Similarity: Returns similarity of 2 users using Euclidean distance\n"
         + "- Recommend Movie by User: Returns list of recommendations for user_A based on user_B watch/rating history"
     )
-
+    print(os.getcwd())
     links = pd.read_csv("/data/movielens/100k/links.csv", sep=",", encoding="latin-1")
     movies = pd.read_csv("/data/movielens/100k/movies.csv", sep=",", encoding="latin-1")
     ratings = pd.read_csv(
