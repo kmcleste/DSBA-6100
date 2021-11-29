@@ -16,24 +16,28 @@ def main():
     # Create streamlit web app
     st.markdown('# BlockCluster v1.1')
     st.write('---')
-    st.sidebar.subheader('Options')
-    option_1 = st.sidebar.checkbox('Genre')
-    option_2 = st.sidebar.checkbox('Title')
-    option_3 = st.sidebar.checkbox('Top/Bottom')
-    option_4 = st.sidebar.checkbox('Compare Viewed Movies')
-    option_5 = st.sidebar.checkbox('Compare User Ratings')
-    option_6 = st.sidebar.checkbox('Score User Similarity')
-    option_7 = st.sidebar.checkbox('Recommend Movie by User')
-    option_8 = st.sidebar.checkbox('Show List of Movies')
-    option_9 = st.sidebar.checkbox('Show User Movies')
-    st.markdown('## Welcome!\nPlease select the options by which you would like to receive recommendations in the sidebar\n' +
-                '- Genre: Returns movies with similar genres to the user input\n' +
-                '- Title: Returns movies that have similar titles - i.e. Toy Story -> [Toy Soldier, Story of Us]\n'+
-                '- Top/Bottom: Returns the top or bottom n-movies in the dataset\n'+
-                '- Compare Viewed Movies: Returns movies watched by both user_A and user_B\n'+
-                '- Compare User Ratings: Returns list of movies watched by both users and their ratings\n'+
-                '- Score User Similarity: Returns similarity of 2 users using Euclidean distance\n'+
-                '- Recommend Movie by User: Returns list of recommendations for user_A based on user_B watch/rating history')
+    rec_options = st.sidebar.expander('Recommendation Options', expanded=True)
+    data_options = st.sidebar.expander('View Dataset', expanded=False)
+    option_1 = rec_options.checkbox('Genre')
+    option_2 = rec_options.checkbox('Top/Bottom')
+    option_3 = rec_options.checkbox('Compare Viewed Movies')
+    option_4 = rec_options.checkbox('Compare User Ratings')
+    option_5 = rec_options.checkbox('Score User Similarity')
+    option_6 = rec_options.checkbox('Recommend Movie by User')
+    option_7 = data_options.checkbox('Show List of Movies')
+    option_8 = data_options.checkbox('Show User Movies')
+
+    st.markdown('## Welcome!\nPlease select the options by which you would like to receive recommendations in the sidebar\n\nFor more detailed instructions, see the dropdown below')
+    expand = st.expander('More information...', expanded=False)
+    expand.markdown(
+                '- **Genre**: Returns movies with similar genres to the user input\n' +
+                '- **Top/Bottom**: Returns the top or bottom n-movies in the dataset (can take up to a minute to run)\n'+
+                '- **Compare Viewed Movies**: Returns movies watched by both user_A and user_B\n'+
+                '- **Compare User Ratings**: Returns list of movies watched by both users and their ratings\n'+
+                '- **Score User Similarity**: Returns the similarity of 2 users using Euclidean distance\n'+
+                '- **Recommend Movie by User**: Returns list of recommendations based on similar user profiles\n'+
+                '- **Show List of Movies**: Returns list of all movies in the MovieLens-100k dataset\n'+
+                '- **Show User Movies**: Returns list of movies viewed by a given user')
 
     links = pd.read_csv('data/movielens/100k/links.csv', sep=',', encoding='latin-1')
     movies = pd.read_csv('data/movielens/100k/movies.csv', sep=',', encoding='latin-1')
@@ -180,7 +184,20 @@ def main():
         result['user_B'] = user_B
         return result
 
+    @st.cache
+    def convert_df(df):
+        return df.to_csv().encode('utf-8')
+
     profiles = generate_profiles(merged_df)
+
+    csv = convert_df(merged_df)
+    st.sidebar.download_button(
+        "Download Dataset",
+        csv,
+        "movie-dataset.csv",
+        "text/csv",
+        key='download-csv'
+    )
 
     if option_1:
         # genre based recommendations
@@ -188,7 +205,8 @@ def main():
         with st.form('movie_selection'):
             st.markdown('### Genre-based Recommendations')
             input_col1, input_col2 = st.columns(2)
-            title = input_col1.text_input('Movie Title', 'Enter title...', help='Type in the movie you would like recommendations based upon')
+            title = input_col1.selectbox('Movie Title', merged_df['title'].unique())
+            # title = input_col1.text_input('Movie Title', 'Enter title...', help='Type in the movie you would like recommendations based upon')
             num_recommendations = input_col2.number_input('Number of Recommendations', min_value=1, max_value=50, value=10, step=1)
             submitted = st.form_submit_button('Find Movies')
             if submitted:
@@ -197,23 +215,8 @@ def main():
                 except KeyError:
                     st.warning('Please enter a valid title')
 
-    # title based recommendations
-    if option_2:
-        cosine_sim, titles, indices = generate_tfidf()
-        with st.form('title_selection'):
-            st.markdown('### Title-based Recommendations')
-            input_col1, input_col2 = st.columns(2)
-            title = input_col1.text_input('Movie Title', 'Enter title...', help='Type in the movie you would like recommendations based upon')
-            num_recommendations = input_col2.number_input('Number of Recommendations', min_value=1, max_value=50, value=10, step=1)
-            submitted = st.form_submit_button('Find Movies')
-            if submitted:
-                try:
-                    st.write(title_recommendations(title, num_recommendations))
-                except KeyError:
-                    st.warning('Please enter a valid title')
-
     # average rating for each movie
-    if option_3:
+    if option_2:
         user_avg_ratings = pd.DataFrame(columns=['userId','avg_rating'])
         userId = []
         avg_rating = []
@@ -247,7 +250,7 @@ def main():
                 st.write(avg_movie_ratings.sort_values(by=['avg_rating'], ascending=False)[:num_recommendations])
 
     # user profiles
-    if option_4:
+    if option_3:
         with st.form('compare_users'):
             st.markdown('### Compare User Viewed Movies')
             input_col1, input_col2 = st.columns(2)
@@ -261,7 +264,7 @@ def main():
                     st.warning('Enter a valid user')
 
     # compare user ratings
-    if option_5:
+    if option_4:
         with st.form('compare_user_ratings'):
             st.markdown('### Compare User Ratings')
             input_col1, input_col2 = st.columns(2)
@@ -275,7 +278,7 @@ def main():
                 except KeyError:
                     st.warning('Enter a valid user')
 
-    if option_6:
+    if option_5:
         with st.form('get_user_sim'):
             st.markdown('### User Similarity')
             input_col1, input_col2 = st.columns(2)
@@ -288,7 +291,7 @@ def main():
                 except KeyError:
                     st.warning('Enter a valid user')
 
-    if option_7:
+    if option_6:
         with st.form('rec_movie_user'):
             st.markdown('### User-based Recommendations')
             input_col1, input_col2 = st.columns(2)
@@ -301,10 +304,10 @@ def main():
                 except KeyError:
                     st.warning('Enter a valid user')
 
-    if option_8:
+    if option_7:
         st.write(merged_df['title'])
 
-    if option_9:
+    if option_8:
         with st.form('user_movies'):
             st.markdown('### User-Viewed Movies')
             user = st.number_input('User ID',min_value=1, max_value=609,value=1, step=1)
