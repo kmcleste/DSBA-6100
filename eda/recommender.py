@@ -12,15 +12,19 @@ import plotly.express as go
 from sklearn.preprocessing import LabelEncoder
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
+from streamlit.elements.json import JsonMixin
 from streamlit.state.session_state import Value
 import matplotlib.pyplot as plt
 import streamlit.components.v1 as components
+import json
 
-
+# set app threads to 16 (max of my system)
 os.environ["NUMEXPR_MAX_THREADS"] = "16"
 os.environ["NUMEXPR_NUM_THREADS"] = "16"
 pd.options.mode.chained_assignment = None
+# force matplotlib graphs to be same shape
 plt.rcParams.update({"figure.autolayout": True})
+# set the overall layout to a wide format to fit the network graph on a tradition 1920x1080 screen
 st.set_page_config(layout="wide")
 
 
@@ -32,12 +36,12 @@ def main():
     data_options = st.sidebar.expander("View Dataset", expanded=False)
     option_1 = rec_options.checkbox("Genre")
     option_2 = rec_options.checkbox("Title")
-    option_3 = rec_options.checkbox("Top/Bottom")
-    option_4 = rec_options.checkbox("Compare Viewed Movies")
-    option_5 = rec_options.checkbox("Compare User Ratings")
-    option_6 = rec_options.checkbox("Score User Similarity")
+    option_3 = rec_options.checkbox("IMDB Weighted Ratings")
+    option_4 = rec_options.checkbox("Compare User Ratings")
+    option_5 = rec_options.checkbox("Score User Similarity")
+    option_6 = rec_options.checkbox("Predict User Rating")
     option_7 = rec_options.checkbox("Collaborative User Recommendations")
-    option_8 = data_options.checkbox("Show List of Movies")
+    option_8 = data_options.checkbox("Show Full Dataset")
     option_9 = data_options.checkbox("Show User Movies")
     option_10 = data_options.checkbox("Visualizations")
     option_11 = data_options.checkbox("User Network Graph (BETA)")
@@ -45,12 +49,13 @@ def main():
     st.markdown(
         "## Welcome!\nPlease select the options by which you would like to receive recommendations in the sidebar\n\nFor more detailed instructions, see the dropdown below"
     )
+
+    # Short descriptions for the various options in the st.sidebar, exapandable
     expand = st.expander("More information...", expanded=False)
     expand.markdown(
         "- **Genre**: Returns movies with similar genres to the user input\n"
         + "- **Title**: Returns movies with similar titles to the user input\n"
         + "- **Top/Bottom**: Returns the top or bottom n-movies in the dataset (can take up to a minute to run)\n"
-        + "- **Compare Viewed Movies**: Returns movies watched by both user_A and user_B\n"
         + "- **Compare User Ratings**: Returns list of movies watched by both users and their ratings\n"
         + "- **Score User Similarity**: Returns the similarity of 2 users using Euclidean distance\n"
         + "- **Recommend Movie by User**: Returns list of recommendations based on similar user profiles\n"
@@ -58,6 +63,9 @@ def main():
         + "- **Show User Movies**: Returns list of movies viewed by a given user"
     )
 
+    st.write('---')
+
+    # load in the data
     links = pd.read_csv("data/movielens/100k/links.csv", sep=",", encoding="latin-1")
     movies = pd.read_csv("data/movielens/100k/movies.csv", sep=",", encoding="latin-1")
     ratings = pd.read_csv(
@@ -66,7 +74,6 @@ def main():
         encoding="latin-1",
         usecols=["userId", "movieId", "rating"],
     )
-    # tags = pd.read_csv('data/movielens/100k/tags.csv', sep=',', encoding='latin-1', usecols=['userId','movieId','tag'])
 
     # remove rows with null values
     links = links.dropna()
@@ -92,6 +99,9 @@ def main():
     merged_df["year"] = [int(x) for x in merged_df["year"]]
     merged_df = merged_df[merged_df["year"] >= 1915]
 
+    with open('profiles.json') as json_file:
+        profiles = json.load(json_file)
+
     @st.cache(show_spinner=False)
     def euclidean_distance(points):
         squared_diff = [(point[0] - point[1]) ** 2 for point in points]
@@ -99,6 +109,7 @@ def main():
         distance = np.sqrt(summed_squared_diffs)
         return distance
 
+    # converts euclidean distance to a similarity measure
     @st.cache(show_spinner=False)
     def similarity(reviews):
         return 1 / (1 + euclidean_distance(reviews))
@@ -132,25 +143,6 @@ def main():
         return titles.iloc[movie_indices]
 
     @st.cache(show_spinner=False)
-    def generate_profiles(merged_df):
-        profiles = {}
-        for user in merged_df["userId"].unique():
-            username = "user_" + str(user)
-
-            temp = merged_df[merged_df["userId"] == user]
-
-            titles = temp["title"]
-            ratings = temp["rating"]
-            ratings = list(ratings)
-
-            movie_list = {}
-            for i, title in enumerate(titles):
-                movie_list[title] = ratings[i]
-
-            profiles[username] = movie_list
-        return profiles
-
-    @st.cache(show_spinner=False)
     def get_common_movies(user_A, user_B):
         return [movie for movie in profiles[user_A] if movie in profiles[user_B]]
 
@@ -170,10 +162,10 @@ def main():
             for other in profiles
             if other != user
         ]
+
         # get sim scores for all users
         similarity_scores.sort()
         similarity_scores.reverse()
-        # similarity_scores = similarity_scores[0:num_suggestions]
 
         recommendations = {}
         for similarity, other in similarity_scores:
@@ -187,9 +179,12 @@ def main():
                     else:
                         recommendations[movie] = (similarity, [weight])
 
+        # PREDICT USER RECOMMENDATION
         for recommendation in recommendations:
             similarity, movie = recommendations[recommendation]
             recommendations[recommendation] = sum(movie) / similarity
+
+        # print(recommendations['Let It Be Me'])
 
         sorted_recommendations = sorted(
             recommendations.items(), key=operator.itemgetter(1), reverse=True
@@ -227,13 +222,6 @@ def main():
     @st.cache(show_spinner=False)
     def convert_df(df):
         return df.to_csv().encode("utf-8")
-
-    profiles = generate_profiles(merged_df)
-
-    csv = convert_df(merged_df)
-    st.sidebar.download_button(
-        "Download Dataset", csv, "movie-dataset.csv", "text/csv", key="download-csv"
-    )
 
     def generate_plotly(merged_df):
         year = merged_df["year"].unique()
@@ -280,6 +268,38 @@ def main():
         plt.title("K-means Clustering")
         return fig
 
+
+        # average rating for each movie
+
+    def predict_rating(user, title, profiles):
+        similarity_scores = [(get_user_similarity(user, other), other) for other in profiles if other != user]
+        # get sim scores for all users
+        similarity_scores.sort()
+        similarity_scores.reverse()
+        
+        recommendations = {}
+        for similarity, other in similarity_scores:
+            reviewed = profiles[other]
+            for movie in reviewed:
+                weight = similarity * reviewed[movie]
+                if movie in recommendations:
+                    sim, weights = recommendations[movie]
+                    recommendations[movie] = (sim + similarity, weights + [weight])
+                else:
+                    recommendations[movie] = (similarity, [weight])
+                        
+        for recommendation in recommendations:
+            similarity, movie = recommendations[recommendation]
+            recommendations[recommendation] = sum(movie) / similarity
+
+        return recommendations[title]
+
+    csv = convert_df(merged_df)
+    st.sidebar.download_button(
+        label="Download Dataset", data=csv, file_name="movie-dataset.csv", mime="text/csv", key="download-csv"
+    )
+
+    # genre based recommendations using tf-idf and cosine sim
     if option_1:
         # genre based recommendations
         cosine_sim, titles, indices = generate_tfidf("genres")
@@ -297,6 +317,7 @@ def main():
                 except KeyError:
                     st.warning("Please enter a valid title")
 
+    # title based recommendations using tf-idf and cosine sim
     if option_2:
         # genre based recommendations
         cosine_sim, titles, indices = generate_tfidf("title")
@@ -314,78 +335,22 @@ def main():
                 except KeyError:
                     st.warning("Please enter a valid title")
 
-    # average rating for each movie
     if option_3:
-        user_avg_ratings = pd.DataFrame(columns=["userId", "avg_rating"])
-        userId = []
-        avg_rating = []
-        for user in merged_df["userId"].unique():
-            userId.append(user)
-            avg_rating.append(
-                merged_df[merged_df["userId"] == user]["rating"].sum()
-                / len(merged_df[merged_df["userId"] == user])
-            )
-        user_avg_ratings["userId"] = userId
-        user_avg_ratings["avg_rating"] = avg_rating
-        user_avg_ratings = user_avg_ratings.set_index("userId")
-        avg_movie_ratings = pd.DataFrame(columns=["movieId", "avg_rating"])
-        movieId = []
-        avg_rating = []
-        for movie in merged_df["movieId"].unique():
-            movieId.append(movie)
-            avg_rating.append(
-                merged_df[merged_df["movieId"] == movie]["rating"].sum()
-                / len(merged_df[merged_df["movieId"] == movie])
-            )
-        avg_movie_ratings["movieId"] = movieId
-        avg_movie_ratings["avg_rating"] = avg_rating
-        avg_movie_ratings = avg_movie_ratings.join(
-            movies.set_index("movieId"), on="movieId"
-        )
-        avg_movie_ratings = avg_movie_ratings.drop(["genres", "year"], axis=1)
-        avg_movie_ratings = avg_movie_ratings.dropna()
-
-        with st.form("average_rating"):
-            st.markdown("### Average Ratings")
-            input_col1, input_col2 = st.columns(2)
-            option = input_col1.selectbox("Movie Order", ("Low->High", "High->Low"))
-            num_recommendations = input_col2.number_input(
-                "Number of Recommendations",
-                min_value=1,
-                max_value=1000,
-                value=10,
-                step=1,
-            )
+        with st.form("imdb-ratings"):
+            st.markdown('### IMDB Weighted Rating')
+            col1, col2 = st.columns(2)
+            order = col1.selectbox('Order',('Low->High','High->Low'))
+            num_recommendations = col2.number_input("Number of Movies", min_value=1, max_value=50, value=10, step=1)
             submitted = st.form_submit_button("Show Movies")
-            if submitted and option == "Low->High":
-                st.write(
-                    avg_movie_ratings.sort_values(by=["avg_rating"])[
-                        :num_recommendations
-                    ]
-                )
-            if submitted and option == "High->Low":
-                st.write(
-                    avg_movie_ratings.sort_values(by=["avg_rating"], ascending=False)[
-                        :num_recommendations
-                    ]
-                )
+            if submitted and order=='Low->High':
+                weighted_ratings = pd.read_csv('weighted_ratings.csv',sep=',',encoding='utf-8',header=0)
+                st.write(weighted_ratings.sort_values(by='score', ascending=True).head(num_recommendations))
+            if submitted and order=='High->Low':
+                weighted_ratings = pd.read_csv('weighted_ratings.csv',sep=',',encoding='utf-8',header=0)
+                st.write(weighted_ratings.sort_values(by='score', ascending=False).head(num_recommendations))
 
-    # user profiles
+    # compare user viewed movies and ratings
     if option_4:
-        with st.form("compare_users"):
-            st.markdown("### Compare User Viewed Movies")
-            input_col1, input_col2 = st.columns(2)
-            user_A = input_col1.text_input("User A", "user_1")
-            user_B = input_col2.text_input("User B", "user_610")
-            submitted = st.form_submit_button("Show Common Movies")
-            if submitted:
-                try:
-                    st.write(get_common_movies(user_A, user_B))
-                except KeyError:
-                    st.warning("Enter a valid user")
-
-    # compare user ratings
-    if option_5:
         with st.form("compare_user_ratings"):
             st.markdown("### Compare User Ratings")
             input_col1, input_col2 = st.columns(2)
@@ -399,7 +364,8 @@ def main():
                 except KeyError:
                     st.warning("Enter a valid user")
 
-    if option_6:
+    # show the similarity of 2 user profiles using euclidean distance
+    if option_5:
         with st.form("get_user_sim"):
             st.markdown("### User Similarity")
             input_col1, input_col2 = st.columns(2)
@@ -412,6 +378,21 @@ def main():
                 except KeyError:
                     st.warning("Enter a valid user")
 
+    if option_6:
+        with st.form("predict-rating"):
+            st.markdown("### Predict User Rating")
+            col1, col2 = st.columns(2)
+            user = col1.text_input('User', 'user_1')
+            title = col2.text_input('Movie Title','Toy Story')
+            submitted = st.form_submit_button("Predict Rating")
+            if submitted:
+                st.text(f'Predicted Rating: {predict_rating(user, title, profiles):.3f}')
+                try:
+                    st.text(f'Actual Rating: {profiles[user][title]}')
+                except KeyError:
+                    st.text('User has not rated this movie.')
+
+    # collaborative filtering, return list of recommendations for given user based on similar users most liked movies
     if option_7:
         with st.form("rec_movie_user"):
             st.markdown("### User-based Recommendations")
@@ -427,9 +408,12 @@ def main():
                 except KeyError:
                     st.warning("Enter a valid user")
 
+    # render the full movielens dataset
     if option_8:
-        st.write(merged_df["title"])
+        st.markdown('### Full MovieLens Dataset')
+        st.write(merged_df)
 
+    # search for movies viewed by user input
     if option_9:
         with st.form("user_movies"):
             st.markdown("### User-Viewed Movies")
@@ -446,6 +430,7 @@ def main():
                 except KeyError:
                     st.warning("Enter a valid user")
 
+    # generate plot for movies produced by year and clustering charts
     if option_10:
         fig0 = generate_plotly(merged_df)
         fig1, pca_array = generate_elbow(merged_df)
@@ -458,6 +443,7 @@ def main():
         col1.pyplot(fig1)
         col2.pyplot(fig2)
 
+    # render pyvis/networx network graph for 7 users since system cannot handle any more...
     if option_11:
         st.markdown("### Network Graph")
         HtmlFile = open("network_graph.html", "r", encoding="utf-8")
