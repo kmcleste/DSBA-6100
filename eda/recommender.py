@@ -25,7 +25,6 @@ pd.options.mode.chained_assignment = None
 # force matplotlib graphs to be same shape
 plt.rcParams.update({"figure.autolayout": True})
 # set the overall layout to a wide format to fit the network graph on a tradition 1920x1080 screen
-st.set_page_config(layout="wide")
 
 
 def main():
@@ -234,43 +233,6 @@ def main():
         )
         return fig
 
-    def generate_elbow(merged_df):
-        encoder = LabelEncoder()
-        encoded_df = merged_df
-        encoded_df["genres_cat"] = encoder.fit_transform(encoded_df["genres"])
-        encoded_df["title_cat"] = encoder.fit_transform(encoded_df["title"])
-        encoded_df = encoded_df.drop(["title", "genres"], axis=1)
-        pca = PCA(n_components=2)
-        pca_array = pca.fit_transform(encoded_df)
-        sum_of_squares = []
-        K = range(1, 10)
-        for k in K:
-            km = KMeans(n_clusters=k)
-            km = km.fit(pca_array)
-            sum_of_squares.append(km.inertia_)
-        fig = plt.figure(figsize=(7, 7))
-        plt.plot(K, sum_of_squares, "bx-")
-        plt.xlabel("k")
-        plt.ylabel("Sum of Square Distances")
-        plt.title("Elbow Method for Optimal k")
-        return fig, pca_array
-
-    def generate_kmeans(pca_array):
-        kmeans = KMeans(n_clusters=3)
-        label = kmeans.fit_predict(pca_array)
-        u_labels = np.unique(label)
-        fig = plt.figure(figsize=(7, 7))
-        for i in u_labels:
-            plt.scatter(x=pca_array[label == i, 0], y=pca_array[label == i, 1], label=i)
-        plt.legend(u_labels)
-        plt.xlabel("Principle Component 1")
-        plt.ylabel("Principle Compotent 2")
-        plt.title("K-means Clustering")
-        return fig
-
-
-        # average rating for each movie
-
     def predict_rating(user, title, profiles):
         similarity_scores = [(get_user_similarity(user, other), other) for other in profiles if other != user]
         # get sim scores for all users
@@ -298,6 +260,8 @@ def main():
     st.sidebar.download_button(
         label="Download Dataset", data=csv, file_name="movie-dataset.csv", mime="text/csv", key="download-csv"
     )
+
+    weighted_ratings = pd.read_csv('weighted_ratings.csv',sep=',',encoding='utf-8',header=0)
 
     # genre based recommendations using tf-idf and cosine sim
     if option_1:
@@ -335,6 +299,7 @@ def main():
                 except KeyError:
                     st.warning("Please enter a valid title")
 
+    # return imdb style weighted ratings
     if option_3:
         with st.form("imdb-ratings"):
             st.markdown('### IMDB Weighted Rating')
@@ -343,10 +308,8 @@ def main():
             num_recommendations = col2.number_input("Number of Movies", min_value=1, max_value=50, value=10, step=1)
             submitted = st.form_submit_button("Show Movies")
             if submitted and order=='Low->High':
-                weighted_ratings = pd.read_csv('weighted_ratings.csv',sep=',',encoding='utf-8',header=0)
                 st.write(weighted_ratings.sort_values(by='score', ascending=True).head(num_recommendations))
             if submitted and order=='High->Low':
-                weighted_ratings = pd.read_csv('weighted_ratings.csv',sep=',',encoding='utf-8',header=0)
                 st.write(weighted_ratings.sort_values(by='score', ascending=False).head(num_recommendations))
 
     # compare user viewed movies and ratings
@@ -378,12 +341,13 @@ def main():
                 except KeyError:
                     st.warning("Enter a valid user")
 
+    # predict user rating
     if option_6:
         with st.form("predict-rating"):
             st.markdown("### Predict User Rating")
             col1, col2 = st.columns(2)
             user = col1.text_input('User', 'user_1')
-            title = col2.text_input('Movie Title','Toy Story')
+            title = col2.selectbox("Movie Title", merged_df["title"].unique())
             submitted = st.form_submit_button("Predict Rating")
             if submitted:
                 st.text(f'Predicted Rating: {predict_rating(user, title, profiles):.3f}')
@@ -433,22 +397,14 @@ def main():
     # generate plot for movies produced by year and clustering charts
     if option_10:
         fig0 = generate_plotly(merged_df)
-        fig1, pca_array = generate_elbow(merged_df)
-        fig2 = generate_kmeans(pca_array)
-
         st.plotly_chart(fig0, use_container_width=True)
-
-        col1, col2 = st.columns(2)
-
-        col1.pyplot(fig1)
-        col2.pyplot(fig2)
 
     # render pyvis/networx network graph for 7 users since system cannot handle any more...
     if option_11:
         st.markdown("### Network Graph")
         HtmlFile = open("network_graph.html", "r", encoding="utf-8")
         source_code = HtmlFile.read()
-        components.html(source_code, width=1200, height=1200)
+        components.html(source_code, width=900, height=900)
 
 
 if __name__ == "__main__":
