@@ -29,7 +29,7 @@ plt.rcParams.update({"figure.autolayout": True})
 
 def main():
     # Create streamlit web app
-    st.markdown("# BlockCluster v1.1")
+    st.markdown("# BlockCluster v1.2")
     st.write("---")
     rec_options = st.sidebar.expander("Recommendation Options", expanded=True)
     data_options = st.sidebar.expander("View Dataset", expanded=False)
@@ -52,14 +52,17 @@ def main():
     # Short descriptions for the various options in the st.sidebar, exapandable
     expand = st.expander("More information...", expanded=False)
     expand.markdown(
-        "- **Genre**: Returns movies with similar genres to the user input\n"
+          "- **Genre**: Returns movies with similar genres to the user input\n"
         + "- **Title**: Returns movies with similar titles to the user input\n"
-        + "- **Top/Bottom**: Returns the top or bottom n-movies in the dataset (can take up to a minute to run)\n"
+        + "- **IMDB Weighted Ratings**: Returns top/bottom X movies using a weighted rating\n"
         + "- **Compare User Ratings**: Returns list of movies watched by both users and their ratings\n"
         + "- **Score User Similarity**: Returns the similarity of 2 users using Euclidean distance\n"
-        + "- **Recommend Movie by User**: Returns list of recommendations based on similar user profiles\n"
-        + "- **Show List of Movies**: Returns list of all movies in the MovieLens-100k dataset\n"
-        + "- **Show User Movies**: Returns list of movies viewed by a given user"
+        + "- **Predict User Rating**: Returns the predicted rating for a movie title using collaborative filtering\n"
+        + "- **Collaborative User Recommendations**: Returns list of recommendations using collaborative filtering\n"
+        + "- **Show Full Dataset**: Returns all data in MovieLens dataset\n"
+        + "- **Show User Movies**: Returns list of movies viewed by selected user\n"
+        + "- **Visualizations**: Draws basic bar graph showing the number of movies produced per year\n"
+        + "- **User Network Graph**: Renders an interactive network graph showing user/movie relationships"
     )
 
     st.write('---')
