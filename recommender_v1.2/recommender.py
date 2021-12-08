@@ -7,16 +7,11 @@ import re
 import operator
 import os
 import numpy as np
-from pathlib import Path
-import plotly.express as go
-from sklearn.preprocessing import LabelEncoder
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
-from streamlit.elements.json import JsonMixin
-from streamlit.state.session_state import Value
+import plotly.express as px
 import matplotlib.pyplot as plt
 import streamlit.components.v1 as components
 import json
+import ast
 
 # set app threads to 16 (max of my system)
 os.environ["NUMEXPR_MAX_THREADS"] = "16"
@@ -25,6 +20,7 @@ pd.options.mode.chained_assignment = None
 # force matplotlib graphs to be same shape
 plt.rcParams.update({"figure.autolayout": True})
 # set the overall layout to a wide format to fit the network graph on a tradition 1920x1080 screen
+st.set_page_config(layout='wide', page_title='BlockCluster')
 
 
 def main():
@@ -68,18 +64,10 @@ def main():
     st.write('---')
 
     # load in the data
-    links = pd.read_csv("data/movielens/100k/links.csv", sep=",", encoding="latin-1")
-    movies = pd.read_csv("data/movielens/100k/movies.csv", sep=",", encoding="latin-1")
-    ratings = pd.read_csv(
-        "data/movielens/100k/ratings.csv",
-        sep=",",
-        encoding="latin-1",
-        usecols=["userId", "movieId", "rating"],
-    )
+    movies = pd.read_csv("data/movielens/100k/movies.csv", sep=",", encoding="utf-8")
+    ratings = pd.read_csv("data/movielens/100k/ratings.csv", sep=",", encoding="utf-8", usecols=["userId", "movieId", "rating"],)
 
     # remove rows with null values
-    links = links.dropna()
-    links.isnull().sum()
 
     # split genres into string array
     movies["genres"] = movies["genres"].str.split("|")
@@ -228,7 +216,7 @@ def main():
     def generate_plotly(merged_df):
         year = merged_df["year"].unique()
         counts = merged_df["year"].value_counts()
-        fig = go.bar(merged_df, year, counts)
+        fig = px.bar(merged_df, year, counts)
         fig.update_layout(
             title="Total Movies Produced by Year",
             xaxis_title="Year",
@@ -259,6 +247,31 @@ def main():
 
         return recommendations[title]
 
+    def generate_ratings_plot(ratings):
+        rating_options = [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0]
+        rating_count = [ratings[ratings['rating']==x]['rating'].count() for x in rating_options]
+        rating_counts = pd.DataFrame(columns=['rating','count'])
+        rating_counts['rating'] = rating_options
+        rating_counts['count'] = rating_count
+        fig = px.bar(data_frame=rating_counts, x='rating', y='count', width=800, height=400, title='Ratings Distribution')
+        return fig
+
+    def generate_genre_plot(movies):
+        genres = []
+        z=[ast.literal_eval(x) for x in movies['genres']]
+        for i in z:
+            for j in i:
+                genres.append(j)
+        genres = pd.DataFrame(data=genres)
+        x = pd.unique(genres[0])
+        y = [genres.value_counts()[x] for x in range(0,len(genres.value_counts()))]
+        xy = pd.DataFrame(columns=['genre','count'])
+        xy['genre'] = x
+        xy['count'] = y
+        xy[xy['genre']==''] = 'null'
+        fig = px.bar(data_frame=xy, x='genre', y='count', width=800, height=400, title='Genres Distribution')
+        return fig
+
     csv = convert_df(merged_df)
     st.sidebar.download_button(
         label="Download Dataset", data=csv, file_name="movie-dataset.csv", mime="text/csv", key="download-csv"
@@ -283,6 +296,8 @@ def main():
                     st.write(genre_recommendations(title, num_recommendations))
                 except KeyError:
                     st.warning("Please enter a valid title")
+                except ValueError:
+                    st.warning("Something went wrong...try a different title")
 
     # title based recommendations using tf-idf and cosine sim
     if option_2:
@@ -301,6 +316,8 @@ def main():
                     st.write(genre_recommendations(title, num_recommendations))
                 except KeyError:
                     st.warning("Please enter a valid title")
+                except ValueError:
+                    st.warning("Something went wrong...try a different title")
 
     # return imdb style weighted ratings
     if option_3:
@@ -401,6 +418,12 @@ def main():
     if option_10:
         fig0 = generate_plotly(merged_df)
         st.plotly_chart(fig0, use_container_width=True)
+        col1, col2 = st.columns(2)
+        fig1 = generate_ratings_plot(ratings)
+        fig2 = generate_genre_plot(movies)
+        
+        col1.plotly_chart(fig1, use_container_width=True)
+        col2.plotly_chart(fig2, use_container_width=True)
 
     # render pyvis/networx network graph for 7 users since system cannot handle any more...
     if option_11:
