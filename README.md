@@ -98,9 +98,6 @@ BlockCluster is a real-time movie recommendation engine that uses collaborative 
 | Team Member   |       Email         |
 | -----------   | --------------------|
 | Kyle McLester | <kmcleste@uncc.edu> |
-| Praneeth Inturi| <pinturi@uncc.edu>  |
-| PJ Yoder      | <pyoder@uncc.edu>   |
-| Luke Johnson  | <ljohn220@uncc.edu> |
 
 <br>
 
